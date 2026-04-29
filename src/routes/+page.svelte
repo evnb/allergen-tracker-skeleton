@@ -14,10 +14,23 @@
 		if (pct < 66) return 'bg-warning-500';
 		return 'bg-success-500';
 	}
+
+	let city = $state(null);
+
+	$effect(() => {
+		fetch('https://ipapi.co/json/')
+			.then((r) => r.json())
+			.then((d) => { city = d.city; });
+	});
 </script>
 
 <main class="max-w-lg mx-auto p-8 space-y-8">
-	<h1 class="h1">Allergen Tracker</h1>
+	<div>
+		<h1 class="h1">Allergen Tracker</h1>
+		{#if city}
+			<p class="text-surface-400 mt-1">{city}</p>
+		{/if}
+	</div>
 	<div class="space-y-6">
 		{#each allergens as allergen}
 			<div class="space-y-2">
