@@ -15,21 +15,37 @@
 		return 'bg-success-500';
 	}
 
-	let city = $state(null);
+	let ipCity = $state('Loading...');
+	let geoCity = $state('Loading...');
 
 	$effect(() => {
-		fetch('https://ipapi.co/json/')
+		fetch('https://ipinfo.io/json')
 			.then((r) => r.json())
-			.then((d) => { city = d.city; });
+			.then((d) => { ipCity = d.city ?? 'Unknown'; })
+			.catch(() => { ipCity = 'Unknown'; });
+
+		navigator.geolocation.getCurrentPosition(
+			async ({ coords }) => {
+				try {
+					const r = await fetch(
+						`https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json`
+					);
+					const d = await r.json();
+					geoCity = d.address?.city ?? d.address?.town ?? d.address?.village ?? 'Unknown';
+				} catch {
+					geoCity = 'Unknown';
+				}
+			},
+			() => { geoCity = 'Unknown'; }
+		);
 	});
 </script>
 
 <main class="max-w-lg mx-auto p-8 space-y-8">
 	<div>
 		<h1 class="h1">Allergen Tracker</h1>
-		{#if city}
-			<p class="text-surface-400 mt-1">{city}</p>
-		{/if}
+		<h2 class="h2">Location (IP): {ipCity}</h2>
+		<h2 class="h2">Location (GPS): {geoCity}</h2>
 	</div>
 	<div class="space-y-6">
 		{#each allergens as allergen}
