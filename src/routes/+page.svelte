@@ -18,6 +18,17 @@
 	let ipCity = $state('Loading...');
 	let geoCity = $state('Loading...');
 
+	let locationText = $derived((() => {
+		const gpsKnown = geoCity !== 'Loading...' && geoCity !== 'Unknown';
+		const ipKnown = ipCity !== 'Loading...' && ipCity !== 'Unknown';
+		if (!gpsKnown && !ipKnown) {
+			return geoCity === 'Loading...' || ipCity === 'Loading...' ? 'Loading...' : 'Unknown';
+		}
+		if (gpsKnown && ipKnown) return `${geoCity} (GPS) / ${ipCity} (IP)`;
+		if (ipKnown) return `${ipCity} (IP) / ${geoCity} (GPS)`;
+		return `${geoCity} (GPS) / ${ipCity} (IP)`;
+	})());
+
 	$effect(() => {
 		fetch('https://ipinfo.io/json')
 			.then((r) => r.json())
@@ -44,8 +55,7 @@
 <main class="max-w-lg mx-auto p-8 space-y-8">
 	<div>
 		<h1 class="h1">Allergen Tracker</h1>
-		<h2 class="h2">Location (IP): {ipCity}</h2>
-		<h2 class="h2">Location (GPS): {geoCity}</h2>
+		<h4 class="h4">Location: {locationText}</h4>
 	</div>
 	<div class="space-y-6">
 		{#each allergens as allergen}
@@ -55,8 +65,8 @@
 					<span>{allergen.pct}%</span>
 				</div>
 				<Progress value={allergen.pct} max={100}>
-					<Progress.Track class="bg-surface-200-800 h-3 rounded-full overflow-hidden">
-						<Progress.Range class="{rangeClass(allergen.pct)} h-full rounded-full" />
+					<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
+						<Progress.Range class="{rangeClass(allergen.pct)} h-full rounded" />
 					</Progress.Track>
 				</Progress>
 			</div>
