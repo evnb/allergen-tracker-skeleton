@@ -10,9 +10,9 @@
 	];
 
 	function rangeClass(pct) {
-		if (pct < 33) return 'bg-error-500';
+		if (pct < 33) return 'bg-success-500';
 		if (pct < 66) return 'bg-warning-500';
-		return 'bg-success-500';
+		return 'bg-error-500';
 	}
 
 	let ipCity = $state('Loading...');
