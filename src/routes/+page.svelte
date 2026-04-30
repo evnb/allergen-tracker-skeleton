@@ -21,17 +21,25 @@
 		return 'bg-error-500';
 	}
 
+	function dustClass(dust) {
+		if (dust <= 25) return 'bg-success-500';
+		if (dust <= 100) return 'bg-warning-500';
+		return 'bg-error-500';
+	}
+
 	let ipCity = $state('Loading...');
 	let geoCity = $state('Loading...');
 	let us_aqi = $state(null);
+	let dust = $state(null);
 
-	async function fetchUs_aqi(lat, lon) {
+	async function fetchAirQuality(lat, lon) {
 		try {
 			const r = await fetch(
-				`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=us_aqi&forecast_days=1`
+				`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=dust,us_aqi&forecast_days=1`
 			);
 			const d = await r.json();
 			us_aqi = d.current?.us_aqi ?? null;
+			dust = d.current?.dust ?? null;
 		} catch {}
 	}
 
@@ -53,14 +61,14 @@
 				ipCity = d.city ?? 'Unknown';
 				if (d.loc) {
 					const [lat, lon] = d.loc.split(',').map(Number);
-					fetchUs_aqi(lat, lon);
+					fetchAirQuality(lat, lon);
 				}
 			})
 			.catch(() => { ipCity = 'Unknown'; });
 
 		navigator.geolocation.getCurrentPosition(
 			async ({ coords }) => {
-				fetchUs_aqi(coords.latitude, coords.longitude);
+				fetchAirQuality(coords.latitude, coords.longitude);
 				try {
 					const r = await fetch(
 						`https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json`
@@ -90,6 +98,17 @@
 			<Progress value={us_aqi ?? 0} max={300}>
 				<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
 					<Progress.Range class="{us_aqi != null ? us_aqiClass(us_aqi) : ''} h-full rounded" />
+				</Progress.Track>
+			</Progress>
+		</div>
+		<div class="space-y-2">
+			<div class="flex justify-between text-sm font-medium">
+				<span>Saharan Dust</span>
+				<span>{dust != null ? `${dust} μg/m³` : '...'}</span>
+			</div>
+			<Progress value={dust ?? 0} max={200}>
+				<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
+					<Progress.Range class="{dust != null ? dustClass(dust) : ''} h-full rounded" />
 				</Progress.Track>
 			</Progress>
 		</div>
