@@ -15,23 +15,23 @@
 		return 'bg-error-500';
 	}
 
-	function aqiClass(aqi) {
-		if (aqi <= 50) return 'bg-success-500';
-		if (aqi <= 100) return 'bg-warning-500';
+	function us_aqiClass(us_aqi) {
+		if (us_aqi <= 50) return 'bg-success-500';
+		if (us_aqi <= 100) return 'bg-warning-500';
 		return 'bg-error-500';
 	}
 
 	let ipCity = $state('Loading...');
 	let geoCity = $state('Loading...');
-	let aqi = $state(null);
+	let us_aqi = $state(null);
 
-	async function fetchAqi(lat, lon) {
+	async function fetchUs_aqi(lat, lon) {
 		try {
 			const r = await fetch(
 				`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=us_aqi&forecast_days=1`
 			);
 			const d = await r.json();
-			aqi = d.current?.us_aqi ?? null;
+			us_aqi = d.current?.us_aqi ?? null;
 		} catch {}
 	}
 
@@ -53,14 +53,14 @@
 				ipCity = d.city ?? 'Unknown';
 				if (d.loc) {
 					const [lat, lon] = d.loc.split(',').map(Number);
-					fetchAqi(lat, lon);
+					fetchUs_aqi(lat, lon);
 				}
 			})
 			.catch(() => { ipCity = 'Unknown'; });
 
 		navigator.geolocation.getCurrentPosition(
 			async ({ coords }) => {
-				fetchAqi(coords.latitude, coords.longitude);
+				fetchUs_aqi(coords.latitude, coords.longitude);
 				try {
 					const r = await fetch(
 						`https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json`
@@ -85,11 +85,11 @@
 		<div class="space-y-2">
 			<div class="flex justify-between text-sm font-medium">
 				<span>US AQI</span>
-				<span>{aqi ?? '...'}</span>
+				<span>{us_aqi ?? '...'}</span>
 			</div>
-			<Progress value={aqi ?? 0} max={300}>
+			<Progress value={us_aqi ?? 0} max={300}>
 				<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
-					<Progress.Range class="{aqi != null ? aqiClass(aqi) : ''} h-full rounded" />
+					<Progress.Range class="{us_aqi != null ? us_aqiClass(us_aqi) : ''} h-full rounded" />
 				</Progress.Track>
 			</Progress>
 		</div>
