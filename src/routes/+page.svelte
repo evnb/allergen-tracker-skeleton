@@ -17,6 +17,7 @@
 	let geoCity = $state('Loading...');
 	let us_aqi = $state(null);
 	let dust = $state(null);
+	let pollenTypes = $state([]);
 	let plants = $state([]);
 	let ipCoords = $state(null);
 	let geoCoords = $state(null);
@@ -35,7 +36,9 @@
 				`https://evn--39c47886456111f1915642b51c65c3df.web.val.run/forecast?location.latitude=${lat}&location.longitude=${lon}&days=1`
 			);
 			const d = await r.json();
-			plants = (d.dailyInfo?.[0]?.plantInfo ?? []).filter((p) => p.indexInfo?.value != null);
+			const day = d.dailyInfo?.[0];
+			pollenTypes = (day?.pollenTypeInfo ?? []).filter((p) => p.indexInfo?.value != null);
+			plants = (day?.plantInfo ?? []).filter((p) => p.indexInfo?.value != null);
 		} catch {}
 	}
 
@@ -131,22 +134,41 @@
 		</div>
 	</div>
 
-	{#if plants.length > 0}
+	{#if pollenTypes.length > 0 || plants.length > 0}
 		<div class="space-y-6">
 			<h2 class="h2">Pollen</h2>
-			{#each plants as plant}
-				<div class="space-y-2">
-					<div class="flex justify-between text-sm font-medium">
-						<span>{plant.displayName}</span>
-						<span>{plant.indexInfo.category}</span>
+			{#if pollenTypes.length > 0}
+				<h3 class="h3">By Type</h3>
+				{#each pollenTypes as pt}
+					<div class="space-y-2">
+						<div class="flex justify-between text-sm font-medium">
+							<span>{pt.displayName}</span>
+							<span>{pt.indexInfo.category}</span>
+						</div>
+						<Progress value={pt.indexInfo.value} max={5}>
+							<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
+								<Progress.Range class="{pollenClass(pt.indexInfo.value)} h-full rounded" />
+							</Progress.Track>
+						</Progress>
 					</div>
-					<Progress value={plant.indexInfo.value} max={5}>
-						<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
-							<Progress.Range class="{pollenClass(plant.indexInfo.value)} h-full rounded" />
-						</Progress.Track>
-					</Progress>
-				</div>
-			{/each}
+				{/each}
+			{/if}
+			{#if plants.length > 0}
+				<h3 class="h3">By Plant</h3>
+				{#each plants as plant}
+					<div class="space-y-2">
+						<div class="flex justify-between text-sm font-medium">
+							<span>{plant.displayName}</span>
+							<span>{plant.indexInfo.category}</span>
+						</div>
+						<Progress value={plant.indexInfo.value} max={5}>
+							<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
+								<Progress.Range class="{pollenClass(plant.indexInfo.value)} h-full rounded" />
+							</Progress.Track>
+						</Progress>
+					</div>
+				{/each}
+			{/if}
 		</div>
 	{/if}
 
