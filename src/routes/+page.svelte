@@ -117,8 +117,8 @@
 
 <main class="max-w-lg mx-auto p-8 space-y-8">
 	<div>
-		<h1 class="h1">Allergen Tracker</h1>
-		<h4 class="h4">Location: {locationText}</h4>
+		<h1 class="h1">Allergen Tracker 🤧</h1>
+		<h4 class="h4">Location: {locationText} 📍</h4>
 	</div>
 	<div class="space-y-6">
 		<div class="space-y-2">
@@ -176,4 +176,6 @@
 			{/each}
 		</div>
 	{/if}
+	<hr class="hr" />
+	<p>Favicon is the sneeze emoji from Streamline Emojis set by <a class="anchor" href="https://github.com/webalys-hq/streamline-vectors">Streamline</a>. License is <a class="anchor" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
 </main>
