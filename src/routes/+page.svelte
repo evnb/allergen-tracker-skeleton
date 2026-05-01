@@ -32,6 +32,10 @@
 	let us_aqi = $state(null);
 	let dust = $state(null);
 	let plants = $state([]);
+	let ipCoords = $state(null);
+	let geoCoords = $state(null);
+	let ipSettled = $state(false);
+	let geoSettled = $state(false);
 
 	function pollenClass(value) {
 		if (value <= 2) return 'bg-success-500';
@@ -79,15 +83,16 @@
 				if (d.loc) {
 					const [lat, lon] = d.loc.split(',').map(Number);
 					fetchAirQuality(lat, lon);
-					fetchPollen(lat, lon);
+					ipCoords = { lat, lon };
 				}
 			})
-			.catch(() => { ipCity = 'Unknown'; });
+			.catch(() => { ipCity = 'Unknown'; })
+			.finally(() => { ipSettled = true; });
 
 		navigator.geolocation.getCurrentPosition(
 			async ({ coords }) => {
 				fetchAirQuality(coords.latitude, coords.longitude);
-				fetchPollen(coords.latitude, coords.longitude);
+				geoCoords = { lat: coords.latitude, lon: coords.longitude };
 				try {
 					const r = await fetch(
 						`https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json`
@@ -97,9 +102,16 @@
 				} catch {
 					geoCity = 'Unknown';
 				}
+				geoSettled = true;
 			},
-			() => { geoCity = 'Unknown'; }
+			() => { geoCity = 'Unknown'; geoSettled = true; }
 		);
+	});
+
+	$effect(() => {
+		if (!ipSettled || !geoSettled) return;
+		const coords = geoCoords ?? ipCoords;
+		if (coords) fetchPollen(coords.lat, coords.lon);
 	});
 </script>
 
