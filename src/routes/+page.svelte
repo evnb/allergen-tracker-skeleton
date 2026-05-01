@@ -1,20 +1,6 @@
 <script>
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
 
-	const allergens = [
-		{ name: 'Peanuts', pct: 15 },
-		{ name: 'Shellfish', pct: 60 },
-		{ name: 'Dairy', pct: 40 },
-		{ name: 'Gluten', pct: 85 },
-		{ name: 'Tree Nuts', pct: 25 },
-	];
-
-	function rangeClass(pct) {
-		if (pct < 33) return 'bg-success-500';
-		if (pct < 66) return 'bg-warning-500';
-		return 'bg-error-500';
-	}
-
 	function us_aqiClass(us_aqi) {
 		if (us_aqi <= 50) return 'bg-success-500';
 		if (us_aqi <= 100) return 'bg-warning-500';
@@ -143,19 +129,6 @@
 				</Progress.Track>
 			</Progress>
 		</div>
-		{#each allergens as allergen}
-			<div class="space-y-2">
-				<div class="flex justify-between text-sm font-medium">
-					<span>{allergen.name}</span>
-					<span>{allergen.pct}%</span>
-				</div>
-				<Progress value={allergen.pct} max={100}>
-					<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
-						<Progress.Range class="{rangeClass(allergen.pct)} h-full rounded" />
-					</Progress.Track>
-				</Progress>
-			</div>
-		{/each}
 	</div>
 
 	{#if plants.length > 0}
