@@ -31,6 +31,23 @@
 	let geoCity = $state('Loading...');
 	let us_aqi = $state(null);
 	let dust = $state(null);
+	let plants = $state([]);
+
+	function pollenClass(value) {
+		if (value <= 2) return 'bg-success-500';
+		if (value === 3) return 'bg-warning-500';
+		return 'bg-error-500';
+	}
+
+	async function fetchPollen(lat, lon) {
+		try {
+			const r = await fetch(
+				`https://evn--39c47886456111f1915642b51c65c3df.web.val.run/forecast?location.latitude=${lat}&location.longitude=${lon}&days=1`
+			);
+			const d = await r.json();
+			plants = (d.dailyInfo?.[0]?.plantInfo ?? []).filter((p) => p.indexInfo?.value != null);
+		} catch {}
+	}
 
 	async function fetchAirQuality(lat, lon) {
 		try {
@@ -62,6 +79,7 @@
 				if (d.loc) {
 					const [lat, lon] = d.loc.split(',').map(Number);
 					fetchAirQuality(lat, lon);
+					fetchPollen(lat, lon);
 				}
 			})
 			.catch(() => { ipCity = 'Unknown'; });
@@ -69,6 +87,7 @@
 		navigator.geolocation.getCurrentPosition(
 			async ({ coords }) => {
 				fetchAirQuality(coords.latitude, coords.longitude);
+				fetchPollen(coords.latitude, coords.longitude);
 				try {
 					const r = await fetch(
 						`https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json`
@@ -126,4 +145,23 @@
 			</div>
 		{/each}
 	</div>
+
+	{#if plants.length > 0}
+		<div class="space-y-6">
+			<h2 class="h2">Pollen</h2>
+			{#each plants as plant}
+				<div class="space-y-2">
+					<div class="flex justify-between text-sm font-medium">
+						<span>{plant.displayName}</span>
+						<span>{plant.indexInfo.category}</span>
+					</div>
+					<Progress value={plant.indexInfo.value} max={5}>
+						<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
+							<Progress.Range class="{pollenClass(plant.indexInfo.value)} h-full rounded" />
+						</Progress.Track>
+					</Progress>
+				</div>
+			{/each}
+		</div>
+	{/if}
 </main>
