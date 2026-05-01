@@ -123,7 +123,7 @@
 	<div class="space-y-6">
 		<div class="space-y-2">
 			<div class="flex justify-between text-sm font-medium">
-				<span>US AQI</span>
+				<span>US AQI <sup>†</sup></span>
 				<span>{us_aqi ?? '...'}</span>
 			</div>
 			<Progress value={us_aqi ?? 0} max={300}>
@@ -134,7 +134,7 @@
 		</div>
 		<div class="space-y-2">
 			<div class="flex justify-between text-sm font-medium">
-				<span>Saharan Dust</span>
+				<span>Saharan Dust <sup>†</sup></span>
 				<span>{dust != null ? `${dust} μg/m³` : '...'}</span>
 			</div>
 			<Progress value={dust ?? 0} max={200}>
@@ -176,6 +176,13 @@
 			{/each}
 		</div>
 	{/if}
+
 	<hr class="hr" />
-	<p>Favicon is the sneeze emoji from Streamline Emojis set by <a class="anchor" href="https://github.com/webalys-hq/streamline-vectors">Streamline</a>. License is <a class="anchor" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
+
+	<section class="space-y-4">
+		<ul class="list-inside list-none space-y-2">
+			<li><sup>*</sup> Favicon from Streamline Emojis by <a class="anchor" href="https://github.com/webalys-hq/streamline-vectors">Streamline</a>. License: <a class="anchor" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></li>
+			<li><sup>†</sup> Data from Open-Meteo, which uses <a class="anchor" href="https://confluence.ecmwf.int/display/CKB/CAMS+Regional%3A+European+air+quality+analysis+and+forecast+data+documentation/#CAMSRegional:Europeanairqualityanalysisandforecastdatadocumentation-Howtoacknowledge,citeandrefertothedata">CAMS ENSEMBLE data</a>.</li>
+		</ul>
+	</section>
 </main>
