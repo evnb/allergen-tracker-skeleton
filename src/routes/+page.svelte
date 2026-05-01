@@ -177,12 +177,12 @@
 		</div>
 	{/if}
 
-	<hr class="hr" />
-
-	<section class="space-y-4">
-		<ul class="list-inside list-none space-y-2">
-			<li><sup>*</sup> Favicon from Streamline Emojis by <a class="anchor" href="https://github.com/webalys-hq/streamline-vectors">Streamline</a>. License: <a class="anchor" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></li>
-			<li><sup>†</sup> Data from Open-Meteo, which uses <a class="anchor" href="https://confluence.ecmwf.int/display/CKB/CAMS+Regional%3A+European+air+quality+analysis+and+forecast+data+documentation/#CAMSRegional:Europeanairqualityanalysisandforecastdatadocumentation-Howtoacknowledge,citeandrefertothedata">CAMS ENSEMBLE data</a>.</li>
-		</ul>
-	</section>
 </main>
+
+<footer class="max-w-lg mx-auto px-8 pb-8 space-y-4">
+	<hr class="hr" />
+	<ul class="list-none space-y-2">
+		<li><sup>*</sup> Favicon from Streamline Emojis by <a class="anchor" href="https://github.com/webalys-hq/streamline-vectors">Streamline</a>. License: <a class="anchor" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></li>
+		<li><sup>†</sup> Data from Open-Meteo, which uses <a class="anchor" href="https://confluence.ecmwf.int/display/CKB/CAMS+Regional%3A+European+air+quality+analysis+and+forecast+data+documentation/#CAMSRegional:Europeanairqualityanalysisandforecastdatadocumentation-Howtoacknowledge,citeandrefertothedata">CAMS ENSEMBLE data</a>.</li>
+	</ul>
+</footer>
