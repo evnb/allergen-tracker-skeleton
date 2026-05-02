@@ -147,7 +147,7 @@ pollenTypes = (day?.pollenTypeInfo ?? []).filter((p) => p.indexInfo?.value != nu
 					<div class="flex justify-between text-sm font-medium">
 						<div class="flex items-center gap-1">
 							<span>{pt.displayName}</span>
-							<Collapsible.Trigger class="btn preset-filled-primary-500">
+							<Collapsible.Trigger class="btn btn-sm preset-outlined-primary-500">
 								Expand <ChevronDownIcon class="size-4" />
 							</Collapsible.Trigger>
 						</div>
