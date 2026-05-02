@@ -143,15 +143,15 @@ pollenTypes = (day?.pollenTypeInfo ?? []).filter((p) => p.indexInfo?.value != nu
 			<h2 class="h2">Pollen</h2>
 			{#each pollenTypes as pt}
 				{@const typePlants = plantsByType[pt.code] ?? []}
-				<Collapsible>
+				<Collapsible class="space-y-2">
 					<div class="flex justify-between text-sm font-medium">
-						<span>{pt.displayName}</span>
-						<div class="flex items-center gap-2">
-							<span>{pt.indexInfo.category}</span>
-							<Collapsible.Trigger class="btn-icon hover:preset-tonal">
-								<ChevronDownIcon class="size-4" />
+						<div class="flex items-center gap-1">
+							<span>{pt.displayName}</span>
+							<Collapsible.Trigger class="btn preset-filled-primary-500">
+								Expand <ChevronDownIcon class="size-4" />
 							</Collapsible.Trigger>
 						</div>
+						<span>{pt.indexInfo.category}</span>
 					</div>
 					<Progress value={pt.indexInfo.value} max={5}>
 						<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
