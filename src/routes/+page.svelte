@@ -1,5 +1,6 @@
 <script>
-	import { Progress } from '@skeletonlabs/skeleton-svelte';
+	import { Collapsible, Progress } from '@skeletonlabs/skeleton-svelte';
+	import { ChevronDownIcon } from '@lucide/svelte';
 
 	function us_aqiClass(us_aqi) {
 		if (us_aqi <= 50) return 'bg-success-500';
@@ -19,7 +20,6 @@
 	let dust = $state(null);
 	let pollenTypes = $state([]);
 	let plants = $state([]);
-	let openTypes = $state({});
 	let plantsByType = $derived(
 		plants.reduce((acc, p) => { (acc[p.plantDescription?.type] ??= []).push(p); return acc; }, {})
 	);
@@ -143,17 +143,14 @@ pollenTypes = (day?.pollenTypeInfo ?? []).filter((p) => p.indexInfo?.value != nu
 			<h2 class="h2">Pollen</h2>
 			{#each pollenTypes as pt}
 				{@const typePlants = plantsByType[pt.code] ?? []}
-				<div class="space-y-2">
+				<Collapsible>
 					<div class="flex justify-between text-sm font-medium">
 						<span>{pt.displayName}</span>
 						<div class="flex items-center gap-2">
 							<span>{pt.indexInfo.category}</span>
-							{#if typePlants.length > 0}
-								<button
-									class="opacity-60 hover:opacity-100 cursor-pointer"
-									onclick={() => { openTypes[pt.code] = !openTypes[pt.code]; }}
-								>{openTypes[pt.code] ? '▴' : '▾'}</button>
-							{/if}
+							<Collapsible.Trigger class="btn-icon hover:preset-tonal">
+								<ChevronDownIcon class="size-4" />
+							</Collapsible.Trigger>
 						</div>
 					</div>
 					<Progress value={pt.indexInfo.value} max={5}>
@@ -161,24 +158,22 @@ pollenTypes = (day?.pollenTypeInfo ?? []).filter((p) => p.indexInfo?.value != nu
 							<Progress.Range class="{pollenClass(pt.indexInfo.value)} h-full rounded" />
 						</Progress.Track>
 					</Progress>
-					{#if openTypes[pt.code] && typePlants.length > 0}
-						<div class="pl-4 pt-2 space-y-4">
-							{#each typePlants as plant}
-								<div class="space-y-2">
-									<div class="flex justify-between text-sm font-medium">
-										<span>{plant.displayName}</span>
-										<span>{plant.indexInfo.category}</span>
-									</div>
-									<Progress value={plant.indexInfo.value} max={5}>
-										<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
-											<Progress.Range class="{pollenClass(plant.indexInfo.value)} h-full rounded" />
-										</Progress.Track>
-									</Progress>
+					<Collapsible.Content class="pl-4 pt-2 space-y-4">
+						{#each typePlants as plant}
+							<div class="space-y-2">
+								<div class="flex justify-between text-sm font-medium">
+									<span>{plant.displayName}</span>
+									<span>{plant.indexInfo.category}</span>
 								</div>
-							{/each}
-						</div>
-					{/if}
-				</div>
+								<Progress value={plant.indexInfo.value} max={5}>
+									<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
+										<Progress.Range class="{pollenClass(plant.indexInfo.value)} h-full rounded" />
+									</Progress.Track>
+								</Progress>
+							</div>
+						{/each}
+					</Collapsible.Content>
+				</Collapsible>
 			{/each}
 		</div>
 	{/if}
