@@ -19,6 +19,10 @@
 	let dust = $state(null);
 	let pollenTypes = $state([]);
 	let plants = $state([]);
+	let openTypes = $state({});
+	let plantsByType = $derived(
+		plants.reduce((acc, p) => { (acc[p.plantDescription?.type] ??= []).push(p); return acc; }, {})
+	);
 	let ipCoords = $state(null);
 	let geoCoords = $state(null);
 	let ipSettled = $state(false);
@@ -37,7 +41,7 @@
 			);
 			const d = await r.json();
 			const day = d.dailyInfo?.[0];
-			pollenTypes = (day?.pollenTypeInfo ?? []).filter((p) => p.indexInfo?.value != null);
+pollenTypes = (day?.pollenTypeInfo ?? []).filter((p) => p.indexInfo?.value != null);
 			plants = (day?.plantInfo ?? []).filter((p) => p.indexInfo?.value != null);
 		} catch {}
 	}
@@ -134,41 +138,48 @@
 		</div>
 	</div>
 
-	{#if pollenTypes.length > 0 || plants.length > 0}
+	{#if pollenTypes.length > 0}
 		<div class="space-y-6">
 			<h2 class="h2">Pollen</h2>
-			{#if pollenTypes.length > 0}
-				<h3 class="h3">By Type</h3>
-				{#each pollenTypes as pt}
-					<div class="space-y-2">
-						<div class="flex justify-between text-sm font-medium">
-							<span>{pt.displayName}</span>
+			{#each pollenTypes as pt}
+				{@const typePlants = plantsByType[pt.code] ?? []}
+				<div class="space-y-2">
+					<div class="flex justify-between text-sm font-medium">
+						<span>{pt.displayName}</span>
+						<div class="flex items-center gap-2">
 							<span>{pt.indexInfo.category}</span>
+							{#if typePlants.length > 0}
+								<button
+									class="opacity-60 hover:opacity-100 cursor-pointer"
+									onclick={() => { openTypes[pt.code] = !openTypes[pt.code]; }}
+								>{openTypes[pt.code] ? '▴' : '▾'}</button>
+							{/if}
 						</div>
-						<Progress value={pt.indexInfo.value} max={5}>
-							<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
-								<Progress.Range class="{pollenClass(pt.indexInfo.value)} h-full rounded" />
-							</Progress.Track>
-						</Progress>
 					</div>
-				{/each}
-			{/if}
-			{#if plants.length > 0}
-				<h3 class="h3">By Plant</h3>
-				{#each plants as plant}
-					<div class="space-y-2">
-						<div class="flex justify-between text-sm font-medium">
-							<span>{plant.displayName}</span>
-							<span>{plant.indexInfo.category}</span>
+					<Progress value={pt.indexInfo.value} max={5}>
+						<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
+							<Progress.Range class="{pollenClass(pt.indexInfo.value)} h-full rounded" />
+						</Progress.Track>
+					</Progress>
+					{#if openTypes[pt.code] && typePlants.length > 0}
+						<div class="pl-4 pt-2 space-y-4">
+							{#each typePlants as plant}
+								<div class="space-y-2">
+									<div class="flex justify-between text-sm font-medium">
+										<span>{plant.displayName}</span>
+										<span>{plant.indexInfo.category}</span>
+									</div>
+									<Progress value={plant.indexInfo.value} max={5}>
+										<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
+											<Progress.Range class="{pollenClass(plant.indexInfo.value)} h-full rounded" />
+										</Progress.Track>
+									</Progress>
+								</div>
+							{/each}
 						</div>
-						<Progress value={plant.indexInfo.value} max={5}>
-							<Progress.Track class="bg-surface-200-800 h-6 rounded overflow-hidden">
-								<Progress.Range class="{pollenClass(plant.indexInfo.value)} h-full rounded" />
-							</Progress.Track>
-						</Progress>
-					</div>
-				{/each}
-			{/if}
+					{/if}
+				</div>
+			{/each}
 		</div>
 	{/if}
 
