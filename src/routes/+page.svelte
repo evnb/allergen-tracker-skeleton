@@ -185,5 +185,6 @@ pollenTypes = (day?.pollenTypeInfo ?? []).filter((p) => p.indexInfo?.value != nu
 	<ul class="list-none space-y-2">
 		<li><sup>*</sup> Favicon from Streamline Emojis by <a class="anchor" href="https://github.com/webalys-hq/streamline-vectors">Streamline</a>. License: <a class="anchor" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></li>
 		<li><sup>†</sup> Data from Open-Meteo, which uses <a class="anchor" href="https://confluence.ecmwf.int/display/CKB/CAMS+Regional%3A+European+air+quality+analysis+and+forecast+data+documentation/#CAMSRegional:Europeanairqualityanalysisandforecastdatadocumentation-Howtoacknowledge,citeandrefertothedata">CAMS ENSEMBLE data</a>.</li>
+		<li>Geocoding by <a class="anchor" href="https://nominatim.org" target="_blank" rel="noopener">Nominatim</a> · © <a class="anchor" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors</li>
 	</ul>
 </footer>
